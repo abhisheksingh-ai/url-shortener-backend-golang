@@ -38,7 +38,7 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 	var shortCode string
 	for {
 		shortCode = utils.GenerateShortCode(6)
-		shortUrl := "http//localhost:8080/" + shortCode
+		shortUrl := "http://localhost:8080/" + shortCode
 		exists, _ := s.repo.GetByShortCode(ctx, shortUrl)
 
 		if exists == nil {
@@ -46,7 +46,7 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 		}
 	}
 
-	url.ShortUrl = "http//localhost:8080/" + shortCode
+	url.ShortUrl = "http://localhost:8080/" + shortCode
 
 	//3. Save to db via repository
 	result, err := s.repo.CreateNewShortUrl(ctx, url)
