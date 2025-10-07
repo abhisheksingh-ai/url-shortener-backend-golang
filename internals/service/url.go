@@ -83,6 +83,14 @@ func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.
 		}, nil
 	}
 
+	// Increase the count by one
+	err := s.repo.IncreaseClick(ctx, exists.ShortUrl)
+	if err != nil {
+		return &dto.UrlResponseDto{
+			Message: "Issue in increment the click column",
+		}, err
+	}
+
 	return &dto.UrlResponseDto{
 		OriginalUrl: exists.OriginalUrl,
 	}, nil

@@ -12,6 +12,7 @@ import (
 type UrlRepo interface {
 	CreateNewShortUrl(ctx context.Context, url *model.URL) (*model.URL, error)
 	GetByShortCode(ctx context.Context, ShortUrl string) (*model.URL, error)
+	IncreaseClick(ctx context.Context, shortUrl string) error
 }
 
 // Implementing UrlRepo
@@ -46,4 +47,23 @@ func (r *urlRepo) GetByShortCode(ctx context.Context, ShortUrl string) (*model.U
 	}
 
 	return &url, nil
+}
+
+func (r *urlRepo) IncreaseClick(ctx context.Context, shortUrl string) error {
+
+	var url model.URL
+	if err := r.db.WithContext(ctx).First(&url, `"shorturl"=?`, shortUrl).Error; err != nil {
+		return err
+	}
+
+	// Increment the count by one
+	if err := r.db.WithContext(ctx).Model(&url).UpdateColumn(
+		"click", gorm.Expr("click + ?", 1)).Error; err != nil {
+		return err
+	}
+
+	// Return the new click
+	url.Click += 1
+
+	return nil
 }
