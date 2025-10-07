@@ -5,6 +5,7 @@ import "urlShortener/internals/model"
 type UrlDto struct {
 	OriginalUrl string `json:"originalUrl"`
 	ShortUrl    string `json:"shortUrl"`
+	ShortCode   string `json:"shortCode"`
 }
 
 type UrlResponseDto struct {

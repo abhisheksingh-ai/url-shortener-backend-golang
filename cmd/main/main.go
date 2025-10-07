@@ -27,6 +27,7 @@ func main() {
 	ctrl := controller.GetUrlController(svc)
 
 	r.POST("/api/v1/shorten", ctrl.CreateNewShortUrl)
+	r.GET("/:shortCode", ctrl.RedirectUrl)
 
 	r.Run(":8080")
 }

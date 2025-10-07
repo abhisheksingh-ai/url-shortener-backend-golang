@@ -11,6 +11,7 @@ import (
 // interface
 type UrlService interface {
 	CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.UrlResponseDto, error)
+	RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.UrlResponseDto, error)
 }
 
 // Implementation
@@ -63,4 +64,26 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 	}
 
 	return response, nil
+}
+
+func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.UrlResponseDto, error) {
+	//1. dto ---> getting data
+	shortCode := urlDto.ShortCode
+
+	// Making the short url
+	shortUrl := "http://localhost:8080/" + shortCode
+
+	//Checking this in database
+	exists, _ := s.repo.GetByShortCode(ctx, shortUrl)
+
+	if exists == nil {
+		return &dto.UrlResponseDto{
+			Message: "URL Not Found",
+			Data:    nil,
+		}, nil
+	}
+
+	return &dto.UrlResponseDto{
+		OriginalUrl: exists.OriginalUrl,
+	}, nil
 }

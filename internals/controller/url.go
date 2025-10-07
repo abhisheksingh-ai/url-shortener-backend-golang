@@ -38,3 +38,20 @@ func (c *UrlController) CreateNewShortUrl(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, response)
 }
+
+func (c *UrlController) RedirectUrl(ctx *gin.Context) {
+	// getting short code
+	shortCode := ctx.Param("shortCode")
+
+	requestDto := &dto.UrlDto{
+		ShortCode: shortCode,
+	}
+
+	resp, err := c.service.RedirectUrl(ctx, requestDto)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Redirect(http.StatusFound, resp.OriginalUrl)
+}
