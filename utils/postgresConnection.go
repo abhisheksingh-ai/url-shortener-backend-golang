@@ -26,8 +26,9 @@ func GetDbConnection() *gorm.DB {
 		dbName := os.Getenv("DB_NAME")
 
 		// making connection with db
-		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Kolkata",
-			host, user, password, dbName, port,
+		dsn := fmt.Sprintf(
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Kolkata",
+			host, port, user, password, dbName,
 		)
 
 		var err error

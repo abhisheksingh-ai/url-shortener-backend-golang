@@ -18,16 +18,16 @@ type Logger interface {
 }
 
 // Implementations
-type FileLogger struct {
+type fileLogger struct {
 	log *log.Logger
 }
 
-func (f *FileLogger) Info(msg string) {
+func (f *fileLogger) Info(msg string) {
 	f.log.SetPrefix("INFO: ")
 	f.log.Println(msg)
 }
 
-func (f *FileLogger) Error(msg string) {
+func (f *fileLogger) Error(msg string) {
 	f.log.SetPrefix("Error: ")
 	f.log.Println(msg)
 }
@@ -35,14 +35,14 @@ func (f *FileLogger) Error(msg string) {
 // Constructor that will give the Singleton File Logger
 func GetLogger() Logger {
 	onceLogger.Do(func() {
-		file, err := os.OpenFile("app.log", os.O_CREATE|os.O_RDONLY|os.O_APPEND, 0666)
+		file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalf("Error in opening/creating the log file")
 		}
 
 		logger := log.New(file, "", log.Ldate|log.Ltime)
 
-		instance = &FileLogger{
+		instance = &fileLogger{
 			log: logger,
 		}
 	})
