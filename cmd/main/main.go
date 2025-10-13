@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"urlShortener/internals/controller"
+	"urlShortener/internals/middleware"
 	"urlShortener/internals/repository"
 	"urlShortener/internals/service"
 	"urlShortener/utils"
@@ -22,6 +23,9 @@ func main() {
 	logger := utils.GetLogger()
 	db := utils.GetDbConnection()
 
+	// authmiddleware
+	authMiddleware := middleware.AuthMiddleware()
+
 	//url
 	repo := repository.GetUrlRepo(logger, db)
 	svc := service.GetUrlService(logger, repo)
@@ -32,12 +36,22 @@ func main() {
 	userService := service.GetNewService(userRepo, logger)
 	userController := controller.GetNewUserController(userService)
 
-	//Routes for url
-	r.POST("/api/v1/shorten", ctrl.CreateNewShortUrl)
-	r.GET("/:shortCode", ctrl.RedirectUrl)
+	// auth
+	authService := service.GetAuthService(userRepo, logger)
+	authController := controller.GetNewAuthController(authService)
 
+	//Singup and Login
 	//Routes for user
-	r.POST("/api/signup", userController.CreateNewUser)
+	r.POST("/signup", userController.CreateNewUser)
+	r.POST("/login", authController.Login)
+
+	//Routes for url
+	// protected urls
+	protected := r.Group("/api", authMiddleware)
+	{
+		protected.POST("/shorten", ctrl.CreateNewShortUrl)
+		protected.GET("/:shortCode", ctrl.RedirectUrl)
+	}
 
 	r.Run(":8080")
 }
