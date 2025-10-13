@@ -11,6 +11,7 @@ type UserDto struct {
 }
 
 type UserResponseDto struct {
-	Message string `json:"message"`
-	UserID  string `json:"userID"`
+	Message string `json:"message,omitempty"`
+	UserID  string `json:"userID,omitempty"`
+	Token   string `json:"token,omitempty"`
 }
