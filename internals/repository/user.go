@@ -38,7 +38,7 @@ func (u *userRepository) CreateUser(ctx context.Context, user *model.User) (*mod
 // Get user by email id
 func (u *userRepository) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
-	if err := u.db.WithContext(ctx).Where("email=?", email).First(&user).Error; err != nil {
+	if err := u.db.WithContext(ctx).Where("Email=?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

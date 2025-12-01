@@ -5,6 +5,7 @@ go 1.24.5
 require gorm.io/gorm v1.31.0
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/bytedance/sonic v1.14.0 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
@@ -13,6 +14,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.27.0 // indirect
+	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -49,5 +51,6 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/text v0.27.0 // indirect
+	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
 )

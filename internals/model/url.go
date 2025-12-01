@@ -5,12 +5,13 @@ import (
 )
 
 type URL struct {
-	ShortUrl    string    `gorm:"column:shorturl;primaryKey"`
-	OriginalUrl string    `gorm:"column:originalurl"`
-	CreatedAt   time.Time `gorm:"column:createdat"`
-	Click       int32     `gorm:"column:click"`
+	UserId      string    `gorm:"column:UserId"`
+	ShortUrl    string    `gorm:"column:ShortUrl;primaryKey"`
+	OriginalUrl string    `gorm:"column:OriginalUrl"`
+	CreatedAt   time.Time `gorm:"column:CreatedAt"`
+	Click       int32     `gorm:"column:Click"`
 }
 
 func (URL) TableName() string {
-	return "url"
+	return "Url"
 }

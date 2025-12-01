@@ -8,19 +8,19 @@ import (
 )
 
 type User struct {
-	UserID    string `gorm:"column:userid"`
-	FirstName string `gorm:"column:firstname"`
-	LastName  string `gorm:"column:lastname"`
-	Email     string `gorm:"column:email"`
-	Password  string `gorm:"column:password"`
+	UserID    string `gorm:"column:UserID"`
+	FirstName string `gorm:"column:FirstName"`
+	LastName  string `gorm:"column:LastName"`
+	Email     string `gorm:"column:Email"`
+	Password  string `gorm:"column:Password"`
 
-	CreatedAt time.Time `gorm:"column:createdat"`
-	UpdatedAt time.Time `gorm:"column:updatedat"`
+	CreatedAt time.Time `gorm:"column:CreatedAt"`
+	UpdatedAt time.Time `gorm:"column:UpdatedAt"`
 }
 
 // Table Name
 func (User) TableName() string {
-	return "user"
+	return "User"
 }
 
 // this will create the UserID
