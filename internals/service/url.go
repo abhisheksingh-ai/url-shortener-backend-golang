@@ -33,6 +33,7 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 	//1. dto to model
 	url := &model.URL{
 		OriginalUrl: urlDto.OriginalUrl,
+		UserId:      urlDto.UserId,
 	}
 
 	//2. Generate 6 digit Unique char

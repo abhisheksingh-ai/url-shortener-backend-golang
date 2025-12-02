@@ -6,6 +6,7 @@ type UrlDto struct {
 	OriginalUrl string `json:"originalUrl"`
 	ShortUrl    string `json:"shortUrl"`
 	ShortCode   string `json:"shortCode"`
+	UserId      string `json:"userId"`
 }
 
 type UrlResponseDto struct {

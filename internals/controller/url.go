@@ -21,6 +21,9 @@ func GetUrlController(s service.UrlService) *UrlController {
 func (c *UrlController) CreateNewShortUrl(ctx *gin.Context) {
 	var request dto.UrlDto
 
+	userId := ctx.GetString("userId")
+	request.UserId = userId
+
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request payload: " + err.Error(),
