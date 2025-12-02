@@ -48,13 +48,13 @@ func main() {
 	//Singup and Login
 	//Routes for user
 	r.POST("/signup", userController.CreateNewUser) // working this will only create the user
-	r.POST("/login", authController.Login)
+	r.POST("/login", authController.Login)          // working
 
 	//Routes for url
 	// protected urls
 	protected := r.Group("/api", authMiddleware)
 	{
-		protected.POST("/shorten", ctrl.CreateNewShortUrl)
+		protected.POST("/shorten", ctrl.CreateNewShortUrl) // working
 		protected.GET("/:shortCode", ctrl.RedirectUrl)
 	}
 
