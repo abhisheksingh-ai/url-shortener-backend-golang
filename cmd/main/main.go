@@ -4,6 +4,7 @@ import (
 	"log"
 	"urlShortener/internals/controller"
 	"urlShortener/internals/middleware"
+	"urlShortener/internals/model"
 	"urlShortener/internals/repository"
 	"urlShortener/internals/service"
 	"urlShortener/utils"
@@ -22,6 +23,10 @@ func main() {
 	// Initialize logger, db connection, repo, service, controller
 	logger := utils.GetLogger()
 	db := utils.GetDbConnection()
+
+	// auto table creation
+	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.URL{})
 
 	// authmiddleware
 	authMiddleware := middleware.AuthMiddleware()
