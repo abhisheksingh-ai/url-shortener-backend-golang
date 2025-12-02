@@ -39,7 +39,7 @@ func (r *urlRepo) CreateNewShortUrl(ctx context.Context, url *model.URL) (*model
 func (r *urlRepo) GetByShortCode(ctx context.Context, ShortUrl string) (*model.URL, error) {
 	var url model.URL
 
-	if err := r.db.WithContext(ctx).Where(`"ShortUrl" = ?`, ShortUrl).First(&url).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("ShortUrl=?", ShortUrl).First(&url).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
@@ -52,7 +52,7 @@ func (r *urlRepo) GetByShortCode(ctx context.Context, ShortUrl string) (*model.U
 func (r *urlRepo) IncreaseClick(ctx context.Context, shortUrl string) error {
 
 	var url model.URL
-	if err := r.db.WithContext(ctx).First(&url, `"ShortUrl"=?`, shortUrl).Error; err != nil {
+	if err := r.db.WithContext(ctx).First(&url, "ShortUrl=?", shortUrl).Error; err != nil {
 		return err
 	}
 

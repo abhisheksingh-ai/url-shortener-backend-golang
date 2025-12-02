@@ -13,5 +13,5 @@ type URL struct {
 }
 
 func (URL) TableName() string {
-	return "Url"
+	return "url"
 }
