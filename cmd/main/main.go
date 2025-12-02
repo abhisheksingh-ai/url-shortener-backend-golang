@@ -47,7 +47,7 @@ func main() {
 
 	//Singup and Login
 	//Routes for user
-	r.POST("/signup", userController.CreateNewUser)
+	r.POST("/signup", userController.CreateNewUser) // working this will only create the user
 	r.POST("/login", authController.Login)
 
 	//Routes for url

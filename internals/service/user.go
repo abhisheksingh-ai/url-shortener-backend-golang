@@ -55,16 +55,8 @@ func (s *userService) CreateUser(ctx context.Context, userDto *dto.UserDto) (*dt
 		s.logger.Error("Error in user creation" + err.Error())
 	}
 
-	//4. Generate token after user signup
-	token, err := utils.GenerateToken(data.UserID, data.Email)
-	if err != nil {
-		s.logger.Error("Error in generating token: " + err.Error())
-		return nil, err
-	}
-
 	return &dto.UserResponseDto{
 		Message: "User created succesfully",
 		UserID:  data.UserID,
-		Token:   token,
 	}, nil
 }
