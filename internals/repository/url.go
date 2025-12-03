@@ -13,6 +13,7 @@ type UrlRepo interface {
 	CreateNewShortUrl(ctx context.Context, url *model.URL) (*model.URL, error)
 	GetByShortCode(ctx context.Context, ShortUrl string) (*model.URL, error)
 	IncreaseClick(ctx context.Context, shortUrl string) error
+	GetByOriginalUrl(ctx context.Context, originalUrl string, userId string) (*model.URL, error)
 }
 
 // Implementing UrlRepo
@@ -66,4 +67,15 @@ func (r *urlRepo) IncreaseClick(ctx context.Context, shortUrl string) error {
 	url.Click += 1
 
 	return nil
+}
+
+func (r *urlRepo) GetByOriginalUrl(ctx context.Context, originalUrl string, userId string) (*model.URL, error) {
+	var url model.URL
+
+	if err := r.db.WithContext(ctx).Where("UserId=?", userId).Where("OriginalUrl=?", originalUrl).First(&url).Error; err != nil {
+		r.logger.Error("Error: " + err.Error())
+		return nil, err
+	}
+
+	return &url, nil
 }

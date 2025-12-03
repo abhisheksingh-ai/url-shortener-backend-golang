@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"urlShortener/internals/dto"
 	"urlShortener/internals/model"
 	"urlShortener/internals/repository"
 	"urlShortener/utils"
+
+	"gorm.io/gorm"
 )
 
 // interface
@@ -30,34 +33,50 @@ func GetUrlService(l utils.Logger, r repository.UrlRepo) UrlService {
 
 func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.UrlResponseDto, error) {
 
-	//1. dto to model
+	//1. dto → model
 	url := &model.URL{
 		OriginalUrl: urlDto.OriginalUrl,
 		UserId:      urlDto.UserId,
 	}
 
-	//2. Generate 6 digit Unique char
+	// 2. Check if short URL already exists for this user + originalUrl
+	existingUrl, err := s.repo.GetByOriginalUrl(ctx, url.OriginalUrl, url.UserId)
+	if err == nil {
+		// means it exists
+		return &dto.UrlResponseDto{
+			ShortUrl: existingUrl.ShortUrl,
+			Message:  "ShortUrl Already Exists",
+			Data:     existingUrl,
+		}, nil
+	}
+	// if err != nil and it's NOT record not found → it's a real DB error
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
+	// 3. Generate a new unique short code
 	var shortCode string
 	for {
 		shortCode = utils.GenerateShortCode(6)
 		shortUrl := "http://localhost:8080/" + shortCode
-		exists, _ := s.repo.GetByShortCode(ctx, shortUrl)
 
-		if exists == nil {
+		// check if this short code already exists
+		u, _ := s.repo.GetByShortCode(ctx, shortUrl)
+		if u == nil {
 			break
 		}
 	}
 
 	url.ShortUrl = "http://localhost:8080/" + shortCode
 
-	//3. Save to db via repository
+	//4. Save
 	result, err := s.repo.CreateNewShortUrl(ctx, url)
 	if err != nil {
 		s.logger.Error("Error in creating new url: " + err.Error())
 		return nil, err
 	}
 
-	// 4. model   ----> response dto
+	//5. Prepare response
 	response := &dto.UrlResponseDto{
 		ShortUrl: result.ShortUrl,
 		Message:  "ShortUrl Created Successfully",
