@@ -50,10 +50,10 @@ func (r *urlRepo) GetByShortCode(ctx context.Context, ShortCode string) (*model.
 	return &url, nil
 }
 
-func (r *urlRepo) IncreaseClick(ctx context.Context, shortUrl string) error {
+func (r *urlRepo) IncreaseClick(ctx context.Context, ShortCode string) error {
 
 	var url model.URL
-	if err := r.db.WithContext(ctx).First(&url, "ShortUrl=?", shortUrl).Error; err != nil {
+	if err := r.db.WithContext(ctx).First(&url, "ShortCode=?", ShortCode).Error; err != nil {
 		return err
 	}
 
