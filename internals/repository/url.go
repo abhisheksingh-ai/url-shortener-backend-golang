@@ -12,7 +12,7 @@ import (
 type UrlRepo interface {
 	CreateNewShortUrl(ctx context.Context, url *model.URL) (*model.URL, error)
 	GetByShortCode(ctx context.Context, ShortCode string) (*model.URL, error)
-	IncreaseClick(ctx context.Context, shortUrl string) error
+	IncreaseClick(ctx context.Context, ShortCode string) error
 	GetByOriginalUrl(ctx context.Context, originalUrl string, userId string) (*model.URL, error)
 }
 
@@ -58,8 +58,11 @@ func (r *urlRepo) IncreaseClick(ctx context.Context, ShortCode string) error {
 	}
 
 	// Increment the count by one
-	if err := r.db.WithContext(ctx).Model(&url).UpdateColumn(
-		"click", gorm.Expr("click + ?", 1)).Error; err != nil {
+	if err := r.db.WithContext(ctx).
+		Model(&url).
+		Updates(map[string]any{
+			"click": gorm.Expr("click + 1"),
+		}).Error; err != nil {
 		return err
 	}
 
