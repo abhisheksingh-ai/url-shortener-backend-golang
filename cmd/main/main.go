@@ -20,6 +20,8 @@ func main() {
 	}
 	r := gin.Default()
 
+	// Test
+
 	// Initialize logger, db connection, repo, service, controller
 	logger := utils.GetLogger()
 	db := utils.GetDbConnection()
