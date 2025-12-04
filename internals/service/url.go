@@ -97,6 +97,7 @@ func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.
 	exists, _ := s.repo.GetByShortCode(ctx, shortCode)
 
 	if exists == nil {
+		s.logger.Error("short url does not exist")
 		return &dto.UrlResponseDto{
 			Message: "URL Not Found",
 			Data:    nil,
