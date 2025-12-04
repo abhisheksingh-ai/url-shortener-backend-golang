@@ -11,7 +11,7 @@ import (
 // Interface
 type UrlRepo interface {
 	CreateNewShortUrl(ctx context.Context, url *model.URL) (*model.URL, error)
-	GetByShortCode(ctx context.Context, ShortUrl string) (*model.URL, error)
+	GetByShortCode(ctx context.Context, ShortCode string) (*model.URL, error)
 	IncreaseClick(ctx context.Context, shortUrl string) error
 	GetByOriginalUrl(ctx context.Context, originalUrl string, userId string) (*model.URL, error)
 }
@@ -37,10 +37,10 @@ func (r *urlRepo) CreateNewShortUrl(ctx context.Context, url *model.URL) (*model
 	return url, nil
 }
 
-func (r *urlRepo) GetByShortCode(ctx context.Context, ShortUrl string) (*model.URL, error) {
+func (r *urlRepo) GetByShortCode(ctx context.Context, ShortCode string) (*model.URL, error) {
 	var url model.URL
 
-	if err := r.db.WithContext(ctx).Where("ShortUrl=?", ShortUrl).First(&url).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("ShortCode=?", ShortCode).First(&url).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}

@@ -42,10 +42,10 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 
 	// 2. Check if short URL already exists for this user + originalUrl
 	existingUrl, err := s.repo.GetByOriginalUrl(ctx, url.OriginalUrl, url.UserId)
-	if err == nil {
+	if err == nil && existingUrl != nil {
 		// means it exists
 		return &dto.UrlResponseDto{
-			ShortUrl: existingUrl.ShortUrl,
+			ShortUrl: "http://localhost:1010/" + existingUrl.ShortCode,
 			Message:  "ShortUrl Already Exists",
 			Data:     existingUrl,
 		}, nil
@@ -59,16 +59,14 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 	var shortCode string
 	for {
 		shortCode = utils.GenerateShortCode(6)
-		shortUrl := "http://localhost:1010/" + shortCode
-
 		// check if this short code already exists
-		u, _ := s.repo.GetByShortCode(ctx, shortUrl)
+		u, _ := s.repo.GetByShortCode(ctx, shortCode)
 		if u == nil {
 			break
 		}
 	}
 
-	url.ShortUrl = "http://localhost:1010/" + shortCode
+	url.ShortCode = shortCode
 
 	//4. Save
 	result, err := s.repo.CreateNewShortUrl(ctx, url)
@@ -78,12 +76,12 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 	}
 
 	s.logger.Info("Url created", slog.Any(
-		"Url", result.ShortUrl,
+		"Url", "http://localhost:1010/"+result.ShortCode,
 	))
 
 	//5. Prepare response
 	response := &dto.UrlResponseDto{
-		ShortUrl: result.ShortUrl,
+		ShortUrl: "http://localhost:1010/" + result.ShortCode,
 		Message:  "ShortUrl Created Successfully",
 		Data:     result,
 	}
@@ -95,11 +93,8 @@ func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.
 	//1. dto ---> getting data
 	shortCode := urlDto.ShortCode
 
-	// Making the short url
-	shortUrl := "http://localhost:1010/" + shortCode
-
 	//Checking this in database
-	exists, _ := s.repo.GetByShortCode(ctx, shortUrl)
+	exists, _ := s.repo.GetByShortCode(ctx, shortCode)
 
 	if exists == nil {
 		return &dto.UrlResponseDto{
@@ -109,7 +104,7 @@ func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.
 	}
 
 	// Increase the count by one
-	err := s.repo.IncreaseClick(ctx, exists.ShortUrl)
+	err := s.repo.IncreaseClick(ctx, exists.ShortCode)
 	if err != nil {
 		return &dto.UrlResponseDto{
 			Message: "Issue in increment the click column",

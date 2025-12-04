@@ -6,7 +6,7 @@ import (
 
 type URL struct {
 	UserId      string    `gorm:"column:UserId"`
-	ShortUrl    string    `gorm:"column:ShortUrl;primaryKey"`
+	ShortCode   string    `gorm:"column:ShortCode;primaryKey"`
 	OriginalUrl string    `gorm:"column:OriginalUrl"`
 	CreatedAt   time.Time `gorm:"column:CreatedAt"`
 	Click       int32     `gorm:"column:Click"`
