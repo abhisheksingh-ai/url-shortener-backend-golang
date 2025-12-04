@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"urlShortener/internals/dto"
 	"urlShortener/internals/model"
 	"urlShortener/internals/repository"
@@ -19,12 +20,12 @@ type UrlService interface {
 
 // Implementation
 type urlService struct {
-	logger utils.Logger
+	logger *slog.Logger
 	repo   repository.UrlRepo
 }
 
 // constructor
-func GetUrlService(l utils.Logger, r repository.UrlRepo) UrlService {
+func GetUrlService(l *slog.Logger, r repository.UrlRepo) UrlService {
 	return &urlService{
 		logger: l,
 		repo:   r,
@@ -58,7 +59,7 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 	var shortCode string
 	for {
 		shortCode = utils.GenerateShortCode(6)
-		shortUrl := "http://localhost:8080/" + shortCode
+		shortUrl := "http://localhost:1010/" + shortCode
 
 		// check if this short code already exists
 		u, _ := s.repo.GetByShortCode(ctx, shortUrl)
@@ -67,7 +68,7 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 		}
 	}
 
-	url.ShortUrl = "http://localhost:8080/" + shortCode
+	url.ShortUrl = "http://localhost:1010/" + shortCode
 
 	//4. Save
 	result, err := s.repo.CreateNewShortUrl(ctx, url)
@@ -75,6 +76,10 @@ func (s *urlService) CreateNewShortUrl(ctx context.Context, urlDto *dto.UrlDto) 
 		s.logger.Error("Error in creating new url: " + err.Error())
 		return nil, err
 	}
+
+	s.logger.Info("Url created", slog.Any(
+		"Url", result.ShortUrl,
+	))
 
 	//5. Prepare response
 	response := &dto.UrlResponseDto{
@@ -91,7 +96,7 @@ func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.
 	shortCode := urlDto.ShortCode
 
 	// Making the short url
-	shortUrl := "http://localhost:8080/" + shortCode
+	shortUrl := "http://localhost:1010/" + shortCode
 
 	//Checking this in database
 	exists, _ := s.repo.GetByShortCode(ctx, shortUrl)
@@ -110,6 +115,10 @@ func (s *urlService) RedirectUrl(ctx context.Context, urlDto *dto.UrlDto) (*dto.
 			Message: "Issue in increment the click column",
 		}, err
 	}
+
+	s.logger.Info("Url redirection", slog.Any(
+		"RedirectUrl", exists.OriginalUrl,
+	))
 
 	return &dto.UrlResponseDto{
 		OriginalUrl: exists.OriginalUrl,

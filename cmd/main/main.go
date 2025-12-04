@@ -20,11 +20,10 @@ func main() {
 	}
 	r := gin.Default()
 
-	// Test
-
 	// Initialize logger, db connection, repo, service, controller
-	logger := utils.GetLogger()
-	db := utils.GetDbConnection()
+	logger := utils.InitLogger()
+	logger.Info("Main function executed")
+	db := utils.GetDbConnection(logger)
 
 	// auto table creation
 	db.AutoMigrate(&model.User{})
@@ -36,7 +35,7 @@ func main() {
 	//url
 	repo := repository.GetUrlRepo(logger, db)
 	svc := service.GetUrlService(logger, repo)
-	ctrl := controller.GetUrlController(svc)
+	ctrl := controller.GetUrlController(svc, logger)
 
 	//user
 	userRepo := repository.GetUserRepository(db, logger)
@@ -60,5 +59,5 @@ func main() {
 		protected.GET("/:shortCode", ctrl.RedirectUrl)
 	}
 
-	r.Run(":8080")
+	r.Run(":1010")
 }

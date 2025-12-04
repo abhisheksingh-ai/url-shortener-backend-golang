@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log/slog"
 	"urlShortener/internals/repository"
 	"urlShortener/utils"
 
@@ -14,11 +15,11 @@ type AuthService interface {
 
 type authService struct {
 	userRepo repository.UserRepository
-	logger   utils.Logger
+	logger   *slog.Logger
 }
 
 // Authservice object creation
-func GetAuthService(r repository.UserRepository, l utils.Logger) AuthService {
+func GetAuthService(r repository.UserRepository, l *slog.Logger) AuthService {
 	return &authService{
 		userRepo: r,
 		logger:   l,

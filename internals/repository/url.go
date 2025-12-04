@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
+	"log/slog"
 	"urlShortener/internals/model"
-	"urlShortener/utils"
 
 	"gorm.io/gorm"
 )
@@ -18,12 +18,12 @@ type UrlRepo interface {
 
 // Implementing UrlRepo
 type urlRepo struct {
-	logger utils.Logger
+	logger *slog.Logger
 	db     *gorm.DB
 }
 
 // constructor that will return UrlRepo
-func GetUrlRepo(l utils.Logger, db *gorm.DB) UrlRepo {
+func GetUrlRepo(l *slog.Logger, db *gorm.DB) UrlRepo {
 	return &urlRepo{
 		logger: l,
 		db:     db,

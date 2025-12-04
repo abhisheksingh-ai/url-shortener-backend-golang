@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"log/slog"
 	"urlShortener/internals/dto"
 	"urlShortener/internals/model"
 	"urlShortener/internals/repository"
-	"urlShortener/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,11 +17,11 @@ type UserService interface {
 // inheritence
 type userService struct {
 	userRepo repository.UserRepository
-	logger   utils.Logger
+	logger   *slog.Logger
 }
 
 // constructor
-func GetNewService(r repository.UserRepository, l utils.Logger) UserService {
+func GetNewService(r repository.UserRepository, l *slog.Logger) UserService {
 	return &userService{
 		userRepo: r,
 		logger:   l,
@@ -54,6 +54,10 @@ func (s *userService) CreateUser(ctx context.Context, userDto *dto.UserDto) (*dt
 	if err != nil {
 		s.logger.Error("Error in user creation" + err.Error())
 	}
+
+	s.logger.Info("User created",
+		slog.Any("UserId", data.UserID),
+	)
 
 	return &dto.UserResponseDto{
 		Message: "User created succesfully",

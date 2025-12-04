@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
+	"log/slog"
 	"urlShortener/internals/model"
-	"urlShortener/utils"
 
 	"gorm.io/gorm"
 )
@@ -16,11 +16,11 @@ type UserRepository interface {
 // This class will inherit the interface
 type userRepository struct {
 	db     *gorm.DB
-	logger utils.Logger
+	logger *slog.Logger
 }
 
 // Constructor
-func GetUserRepository(db *gorm.DB, l utils.Logger) UserRepository {
+func GetUserRepository(db *gorm.DB, l *slog.Logger) UserRepository {
 	return &userRepository{
 		db:     db,
 		logger: l,

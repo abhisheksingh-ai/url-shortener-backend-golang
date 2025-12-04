@@ -13,7 +13,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		authHeader := ctx.GetHeader("Authorization")
 
 		if authHeader == "" {
-			utils.GetLogger().Info("Authorization header or token is missing")
+			utils.InitLogger().Info("Authorization header or token is missing")
 			ctx.JSON(http.StatusUnauthorized, gin.H{"msg": "Missing token/ Authorization header"})
 			ctx.Abort()
 			return
@@ -22,7 +22,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		claims, err := utils.ValidatToken(tokenString)
 		if err != nil {
-			utils.GetLogger().Error(err.Error())
+			utils.InitLogger().Error(err.Error())
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return

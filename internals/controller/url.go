@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 	"urlShortener/internals/dto"
 	"urlShortener/internals/service"
@@ -10,11 +11,13 @@ import (
 
 type UrlController struct {
 	service service.UrlService
+	logger  *slog.Logger
 }
 
-func GetUrlController(s service.UrlService) *UrlController {
+func GetUrlController(s service.UrlService, l *slog.Logger) *UrlController {
 	return &UrlController{
 		service: s,
+		logger:  l,
 	}
 }
 
@@ -25,6 +28,7 @@ func (c *UrlController) CreateNewShortUrl(ctx *gin.Context) {
 	request.UserId = userId
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
+		c.logger.Error(err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request payload: " + err.Error(),
 		})
@@ -33,6 +37,7 @@ func (c *UrlController) CreateNewShortUrl(ctx *gin.Context) {
 
 	response, err := c.service.CreateNewShortUrl(ctx, &request)
 	if err != nil {
+		c.logger.Error(err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to create short URL: " + err.Error(),
 		})
@@ -46,12 +51,17 @@ func (c *UrlController) RedirectUrl(ctx *gin.Context) {
 	// getting short code
 	shortCode := ctx.Param("shortCode")
 
+	c.logger.Info("", slog.Any(
+		"shortCode", shortCode,
+	))
+
 	requestDto := &dto.UrlDto{
 		ShortCode: shortCode,
 	}
 
 	resp, err := c.service.RedirectUrl(ctx, requestDto)
 	if err != nil {
+		c.logger.Error(err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

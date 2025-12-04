@@ -3,13 +3,13 @@ package utils
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"sync"
 	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 	db               *gorm.DB
 )
 
-func GetDbConnection() *gorm.DB {
+func GetDbConnection(logger *slog.Logger) *gorm.DB {
 	onceDbConnection.Do(func() {
 
 		// Fetch configs from .env
@@ -38,11 +38,9 @@ func GetDbConnection() *gorm.DB {
 		var err error
 
 		// Connect to MySQL
-		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info), // SQL logs
-		})
-
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err != nil {
+			logger.Info(err.Error())
 			log.Fatalf("Failed to connect with MySQL: %v", err)
 		}
 

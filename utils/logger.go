@@ -1,50 +1,36 @@
 package utils
 
 import (
-	"log"
+	"log/slog"
 	"os"
 	"sync"
 )
 
 var (
 	onceLogger sync.Once
-	instance   Logger
+	Logger     *slog.Logger
 )
 
-// Interface
-type Logger interface {
-	Info(msg string)
-	Error(msg string)
-}
-
-// Implementations
-type fileLogger struct {
-	log *log.Logger
-}
-
-func (f *fileLogger) Info(msg string) {
-	f.log.SetPrefix("INFO: ")
-	f.log.Println(msg)
-}
-
-func (f *fileLogger) Error(msg string) {
-	f.log.SetPrefix("Error: ")
-	f.log.Println(msg)
-}
-
-// Constructor that will give the Singleton File Logger
-func GetLogger() Logger {
+func InitLogger() *slog.Logger {
 	onceLogger.Do(func() {
-		file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		// create the log folder
+		err := os.MkdirAll("logs", 0755)
 		if err != nil {
-			log.Fatalf("Error in opening/creating the log file")
+			panic("logs folder not created: " + err.Error())
 		}
 
-		logger := log.New(file, "", log.Ldate|log.Ltime)
-
-		instance = &fileLogger{
-			log: logger,
+		// create the json file
+		file, err := os.OpenFile("logs/app.josn", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			panic("app.json file creation/open issue, error: " + err.Error())
 		}
+
+		handler := slog.NewJSONHandler(file, &slog.HandlerOptions{
+			Level:     slog.LevelDebug,
+			AddSource: true,
+		})
+
+		Logger = slog.New(handler)
 	})
-	return instance
+	return Logger
 }
