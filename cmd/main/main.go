@@ -51,12 +51,14 @@ func main() {
 	r.POST("/signup", userController.CreateNewUser)
 	r.POST("/login", authController.Login)
 
+	// for redirection
+	r.GET("/:shortCode", ctrl.RedirectUrl)
+
 	//Routes for url
 	// protected urls
 	protected := r.Group("/", authMiddleware)
 	{
 		protected.POST("/shorten", ctrl.CreateNewShortUrl)
-		protected.GET("/:shortCode", ctrl.RedirectUrl)
 	}
 
 	r.Run(":1010")
